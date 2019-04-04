@@ -5,17 +5,22 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FTPClient
 {
     class Program
     {
-        
+        [STAThread]
 
         static void Main(string[] args)
         {
 
-            Console.ReadLine();
+
+
+
+
+            //Console.ReadLine();
             // create FtpWebRequest
             //FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://10.7.180.107:21/regex.pdf");
             //request.Method = WebRequestMethods.Ftp.DownloadFile;
@@ -37,6 +42,8 @@ namespace FTPClient
             //}
             //fs.Close();
             //response.Close();
+
+
             Client client = new Client();
             string pach = "";
             int ie = 0;
@@ -44,9 +51,9 @@ namespace FTPClient
             {
                 FileStruct[] Tmp = client.ListDirectory(pach);
                 Console.Clear();
-                for (int i = 0; i < Tmp.Length;i++)
+                for (int i = 0; i < Tmp.Length; i++)
                 {
-                    
+
                     if (i == ie)
                     {
                         Console.BackgroundColor = ConsoleColor.White;
@@ -79,10 +86,10 @@ namespace FTPClient
                 switch (Console.ReadKey().Key)
                 {
                     case ConsoleKey.UpArrow:
-                        ie = (ie > 0 && ie < Tmp.Length) ? ie - 1 : Tmp.Length-1;
+                        ie = (ie > 0 && ie < Tmp.Length) ? ie - 1 : Tmp.Length - 1;
                         break;
                     case ConsoleKey.DownArrow:
-                        ie = (ie != Tmp.Length-1) ? ie + 1 : 0;
+                        ie = (ie != Tmp.Length - 1) ? ie + 1 : 0;
                         break;
                     case ConsoleKey.Enter:
                         if (Tmp[ie].IsDirectory)
@@ -100,7 +107,7 @@ namespace FTPClient
                         {
                             string[] authorsList = pach.Split('/');
                             pach = "";
-                            for (int i = 0; i < authorsList.Length-1; i++)
+                            for (int i = 0; i < authorsList.Length - 1; i++)
                             {
                                 pach += "/" + authorsList[i];
                             }
@@ -109,12 +116,15 @@ namespace FTPClient
                     default:
                         break;
                 }
-                
+
             }
 
 
-            //Console.WriteLine("Saving complete");
+            Console.WriteLine("Saving complete");
             Console.Read();
+
+
+
         }
 
 

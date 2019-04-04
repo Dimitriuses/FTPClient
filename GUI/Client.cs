@@ -6,14 +6,20 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FTPClient
+namespace GUI
 {
-    class Client
+    public class Client
     {
         private string _Host = "10.7.180.101:21";
         private string _UserName = "test_user";
         private string _Password = "1234567890";
 
+        public Client(string host, string user, string password)
+        {
+            _Host = host;
+            _UserName = user;
+            _Password = password;
+        }
         //объект для запроса данных
         FtpWebRequest ftpRequest;
 
@@ -142,5 +148,68 @@ namespace FTPClient
                 }
             }
         }
+
+        public void UploadFile(string path, string fileName)
+        {
+            //для имени файла
+            string shortName = fileName.Remove(0, fileName.LastIndexOf(@"\" ) + 1);
+
+
+            FileStream uploadedFile = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+
+            ftpRequest = (FtpWebRequest)WebRequest.Create("ftp://" + _Host + path + shortName);
+            ftpRequest.Credentials = new NetworkCredential(_UserName, _Password);
+            ftpRequest.EnableSsl = _UseSSL;
+            ftpRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
+            //Буфер для загружаемых данных
+            byte[] file_to_bytes = new byte[uploadedFile.Length];
+            //Считываем данные в буфер
+            uploadedFile.Read(file_to_bytes, 0, file_to_bytes.Length);
+
+            uploadedFile.Close();
+
+            //Поток для загрузки файла 
+            Stream writer = ftpRequest.GetRequestStream();
+
+            writer.Write(file_to_bytes, 0, file_to_bytes.Length);
+            writer.Close();
+        }
+
+        public void DeleteFile(string path)
+        {
+            ftpRequest = (FtpWebRequest)WebRequest.Create("ftp://" + _Host + path);
+            ftpRequest.Credentials = new NetworkCredential(_UserName, _Password);
+            ftpRequest.EnableSsl = _UseSSL;
+            ftpRequest.Method = WebRequestMethods.Ftp.DeleteFile;
+
+            FtpWebResponse ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+            ftpResponse.Close();
+        }
+
+        public void CreateDirectory(string path, string folderName)
+        {
+            FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create("ftp://" + _Host + path + folderName);
+
+            ftpRequest.Credentials = new NetworkCredential(_UserName, _Password);
+            ftpRequest.EnableSsl = _UseSSL;
+            ftpRequest.Method = WebRequestMethods.Ftp.MakeDirectory;
+
+            FtpWebResponse ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+            ftpResponse.Close();
+        }
+
+        public void RemoveDirectory(string path)
+        {
+            string filename = path;
+            FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create("ftp://" + _Host + path);
+            ftpRequest.Credentials = new NetworkCredential(_UserName, _Password);
+            ftpRequest.EnableSsl = _UseSSL;
+            ftpRequest.Method = WebRequestMethods.Ftp.RemoveDirectory;
+
+            FtpWebResponse ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+            ftpResponse.Close();
+        }
+
     }
 }
