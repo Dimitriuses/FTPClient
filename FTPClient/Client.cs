@@ -10,7 +10,7 @@ namespace FTPClient
 {
     class Client
     {
-        private string _Host = "10.7.180.107:21";
+        private string _Host = "10.7.180.101:21";
         private string _UserName = "test_user";
         private string _Password = "1234567890";
 
